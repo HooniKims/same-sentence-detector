@@ -819,6 +819,35 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   white-space: pre-wrap;
   word-break: keep-all;
 }
+.ai-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ai-list li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 14px;
+  color: var(--color-off-black);
+}
+.ai-list li:first-child {
+  font-weight: 600;
+}
+.ai-list li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-lake-blue);
+  opacity: 0.7;
+}
+.ai-list li:first-child::before {
+  opacity: 1;
+}
 
 .dl-row {
   display: flex;

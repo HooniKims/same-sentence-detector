@@ -533,10 +533,19 @@ export default function Home() {
                 <h3>
                   AI 종합 의견 <span className="ai-model">{result.ai?.model || 'Solar 3 Pro'}</span>
                 </h3>
-                <pre>
-                  {result.ai?.text ||
-                    `AI 의견을 작성하지 못했습니다. (사유: ${result.ai?.error || '알 수 없는 오류'})`}
-                </pre>
+                {result.ai?.text ? (
+                  <ul className="ai-list">
+                    {result.ai.text
+                      .split('\n')
+                      .map((line) => line.replace(/^\s*[-·•]\s*/, '').trim())
+                      .filter(Boolean)
+                      .map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                  </ul>
+                ) : (
+                  <pre>{`AI 의견을 작성하지 못했습니다. (사유: ${result.ai?.error || '알 수 없는 오류'})`}</pre>
+                )}
               </div>
 
               <div className="dl-row">
