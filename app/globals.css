@@ -428,6 +428,31 @@ button {
   transform: rotate(90deg);
 }
 
+.file-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 0 6px;
+}
+.file-count {
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+}
+.clear-files {
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.clear-files:hover {
+  color: #b34a26;
+}
+
 .opt-row {
   display: flex;
   align-items: center;
