@@ -26,8 +26,16 @@ function estimateHeight(text, colWidthChars, lineHeight = 15) {
 }
 
 export async function POST(req) {
-  const { fileStats, totalSentences, groups, duplicateSentenceCount, ai, analyzedAt, formatReview } =
-    await req.json();
+  const {
+    fileStats,
+    totalSentences,
+    groups,
+    duplicateSentenceCount,
+    ai,
+    analyzedAt,
+    formatReview,
+    missingPeriods,
+  } = await req.json();
 
   const wb = new ExcelJS.Workbook();
   wb.creator = '무엇이 무엇이 똑같을까';
@@ -51,9 +59,9 @@ export async function POST(req) {
       `표 머리글 ${fileStats.reduce((a, f) => a + (f.headerSkipped || 0), 0)}건, 마침표로 끝나지 않는 문구 ${fileStats.reduce((a, f) => a + (f.labelSkipped || 0), 0)}건`,
     ],
     [
-      'AI 머리글 검토',
+      'AI 검토',
       formatReview?.reviewed > 0
-        ? `머리글 후보 ${formatReview.reviewed}건 검토 — 기록 문장으로 복원 ${formatReview.reincluded}건`
+        ? `애매한 문구 ${formatReview.reviewed}건 검토 — 마침표 누락 문장 ${formatReview.missingPeriodRestored ?? 0}건 비교 포함, 머리글 오분류 복원 ${formatReview.headerReincluded ?? 0}건`
         : `검토할 후보 없음${formatReview?.error ? ` (${formatReview.error})` : ''}`,
     ],
     ['중복 문장 그룹', `${groups.length}개`],
@@ -126,7 +134,9 @@ export async function POST(req) {
   });
 
   groups.forEach((g, i) => {
-    const where = g.occurrences.map((o) => `${o.file} · ${o.location}`).join('\n');
+    const where = g.occurrences
+      .map((o) => `${o.file} · ${o.location}${o.missingPeriod ? ' (마침표 누락)' : ''}`)
+      .join('\n');
     const row = s2.addRow({
       no: i + 1,
       sentence: g.sentence,
@@ -159,6 +169,38 @@ export async function POST(req) {
     });
   }
   s2.autoFilter = { from: 'A1', to: `E${Math.max(2, groups.length + 1)}` };
+
+  /* ── 시트 3: 마침표 누락 의심 문장 ────────────── */
+  if (Array.isArray(missingPeriods) && missingPeriods.length > 0) {
+    const s3 = wb.addWorksheet('마침표 누락 의심', {
+      views: [{ state: 'frozen', ySplit: 1, showGridLines: false }],
+    });
+    s3.columns = [
+      { header: '번호', key: 'no', width: 6 },
+      { header: '문장 (마침표 없음)', key: 'sentence', width: 70 },
+      { header: '발견 위치 (파일 · 위치)', key: 'where', width: 56 },
+    ];
+    const h3 = s3.getRow(1);
+    h3.height = 24;
+    h3.eachCell((c) => {
+      c.font = { name: FONT, size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: INK } };
+      c.alignment = { vertical: 'middle', horizontal: 'center' };
+      c.border = BORDER;
+    });
+    missingPeriods.forEach((m, i) => {
+      const where = m.occurrences.map((o) => `${o.file} · ${o.location}`).join('\n');
+      const row = s3.addRow({ no: i + 1, sentence: m.sentence, where });
+      row.eachCell((c, col) => {
+        c.font = { name: FONT, size: 10, color: { argb: INK } };
+        c.border = BORDER;
+        c.alignment =
+          col === 1 ? { vertical: 'top', horizontal: 'center' } : { vertical: 'top', wrapText: true };
+        if (i % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PARCHMENT } };
+      });
+      row.height = Math.max(estimateHeight(m.sentence, 70), estimateHeight(where, 56));
+    });
+  }
 
   const buf = await wb.xlsx.writeBuffer();
   const pad = (n) => String(n).padStart(2, '0');

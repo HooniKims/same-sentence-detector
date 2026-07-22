@@ -1,6 +1,10 @@
 import { extractUnits } from '../../../lib/extract';
 import { detectDuplicates, collectReviewCandidates } from '../../../lib/detect';
-import { generateAiSummary, reviewFormatPhrases } from '../../../lib/solar';
+import {
+  generateAiSummary,
+  reviewHeaderCandidates,
+  reviewMissingPeriods,
+} from '../../../lib/solar';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -35,27 +39,37 @@ export async function POST(req) {
         }
 
         send({ type: 'progress', pct: 62, message: '문장을 나누어 다듬는 중…', fileIndex: files.length });
-        const { excludedByRule } = collectReviewCandidates(fileUnits);
+        const { headerCandidates, tailCandidates } = collectReviewCandidates(fileUnits);
 
+        const candidateCount = headerCandidates.length + tailCandidates.length;
         send({
           type: 'progress',
           pct: 68,
           message:
-            excludedByRule.length > 0
-              ? `Solar 3 Pro가 머리글 후보 ${excludedByRule.length}건을 검토하는 중…`
-              : '머리글을 확인하는 중…',
+            candidateCount > 0
+              ? `Solar 3 Pro가 애매한 문구 ${candidateCount}건을 검토하는 중… (마침표 누락 포함)`
+              : '애매한 문구를 확인하는 중…',
         });
-        const review = await reviewFormatPhrases(excludedByRule);
+        const [headerReview, tailReview] = await Promise.all([
+          reviewHeaderCandidates(headerCandidates),
+          reviewMissingPeriods(tailCandidates),
+        ]);
 
-        // 머리글 행에서 나온 것 중 AI가 '기록 문장'이라 한 것만 되살린다.
-        const includeKeys = new Set(
-          excludedByRule.filter((it) => review.decisions.get(it.key) === '문장').map((it) => it.key)
-        );
+        // AI가 '문장'이라 한 것만 비교 대상으로 되살린다.
+        const headerKeys = headerCandidates
+          .filter((it) => headerReview.decisions.get(it.key) === '문장')
+          .map((it) => it.key);
+        const tailKeys = tailCandidates
+          .filter((it) => tailReview.decisions.get(it.key) === '문장')
+          .map((it) => it.key);
+        const includeKeys = new Set([...headerKeys, ...tailKeys]);
 
         send({ type: 'progress', pct: 76, message: '문장을 서로 맞대어 보는 중…' });
-        const { groups, totalSentences, fileStats } = detectDuplicates(fileUnits, minLen, {
-          includeKeys,
-        });
+        const { groups, totalSentences, fileStats, missingPeriods } = detectDuplicates(
+          fileUnits,
+          minLen,
+          { includeKeys }
+        );
 
         send({ type: 'progress', pct: 86, message: 'Solar 3 Pro가 종합 의견을 쓰는 중…' });
         const ai = await generateAiSummary({ fileStats, totalSentences, groups });
@@ -71,12 +85,14 @@ export async function POST(req) {
             groups,
             duplicateSentenceCount: groups.reduce((a, g) => a + g.count, 0),
             ai,
+            missingPeriods,
             formatReview: {
-              reviewed: review.reviewed,
-              candidates: excludedByRule.length,
-              reincluded: includeKeys.size,
-              model: review.model,
-              error: review.error,
+              reviewed: headerReview.reviewed + tailReview.reviewed,
+              candidates: candidateCount,
+              headerReincluded: headerKeys.length,
+              missingPeriodRestored: tailKeys.length,
+              model: tailReview.model || headerReview.model,
+              error: tailReview.error || headerReview.error,
             },
           },
         });

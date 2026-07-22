@@ -439,7 +439,10 @@ export default function Home() {
                     </>
                   )}
                   {result.formatReview?.reviewed > 0 &&
-                    `Solar 3 Pro가 머리글 후보 ${result.formatReview.reviewed.toLocaleString()}건을 검토해 ${result.formatReview.reincluded.toLocaleString()}건을 기록 문장으로 되살렸습니다.`}
+                    `Solar 3 Pro가 애매한 문구 ${result.formatReview.reviewed.toLocaleString()}건을 검토해 마침표 누락 문장 ${(result.formatReview.missingPeriodRestored ?? 0).toLocaleString()}건을 비교에 포함했습니다.` +
+                      (result.formatReview.headerReincluded > 0
+                        ? ` 머리글로 잘못 분류됐던 문장 ${result.formatReview.headerReincluded.toLocaleString()}건도 되살렸습니다.`
+                        : '')}
                   {result.formatReview?.error &&
                     ` (AI 서식 검토는 건너뛰었습니다: ${result.formatReview.error})`}
                 </p>
@@ -467,13 +470,17 @@ export default function Home() {
                           <td>
                             {g.sentence}
                             {g.crossFile && <span className="cross-tag">파일 간 중복</span>}
+                            {g.missingPeriod && <span className="mp-tag">마침표 누락</span>}
                           </td>
                           <td className="t-count">{g.count}회</td>
                           <td>
                             {g.occurrences.slice(0, 8).map((o, j) => (
                               <div className="loc-line" key={j}>
                                 <span className="loc-file">{o.file}</span>
-                                <span className="loc-pos">{o.location}</span>
+                                <span className="loc-pos">
+                                  {o.location}
+                                  {o.missingPeriod && ' · 마침표 누락'}
+                                </span>
                               </div>
                             ))}
                             {g.occurrences.length > 8 && (
@@ -486,6 +493,39 @@ export default function Home() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+
+              {result.missingPeriods?.length > 0 && (
+                <div className="mp-card">
+                  <h3>
+                    마침표 누락 의심 문장
+                    <span className="mp-count">{result.missingPeriods.length}건</span>
+                  </h3>
+                  <p className="mp-desc">
+                    문장은 완결되어 보이는데 끝에 마침표가 없습니다. 기록을 다듬을 때 함께
+                    확인해 보세요. (중복 여부와 관계없이 비교에는 포함했습니다)
+                  </p>
+                  <ul>
+                    {result.missingPeriods.slice(0, 30).map((m, i) => (
+                      <li key={i}>
+                        <span className="mp-sentence">{m.sentence}</span>
+                        <span className="mp-locs">
+                          {m.occurrences
+                            .slice(0, 4)
+                            .map((o) => `${o.file} · ${o.location}`)
+                            .join(', ')}
+                          {m.occurrences.length > 4 && ` 외 ${m.occurrences.length - 4}곳`}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {result.missingPeriods.length > 30 && (
+                    <p className="mp-desc">
+                      외 {result.missingPeriods.length - 30}건 — 전체 목록은 다운로드 파일에
+                      있습니다.
+                    </p>
+                  )}
                 </div>
               )}
 
