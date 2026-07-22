@@ -399,28 +399,28 @@ export default function Home() {
 
               <div className="stat-row">
                 <div className="stat-pill">
-                  <div className="s-label">검사 파일</div>
+                  <div className="s-label">검사한 파일</div>
                   <div className="s-value">
                     <CountUp value={result.fileStats.length} />
                     <small> 개</small>
                   </div>
                 </div>
                 <div className="stat-pill">
-                  <div className="s-label">검사 문장</div>
+                  <div className="s-label">검사한 문장</div>
                   <div className="s-value">
                     <CountUp value={result.totalSentences} />
                     <small> 개</small>
                   </div>
                 </div>
                 <div className="stat-pill">
-                  <div className="s-label">중복 그룹</div>
+                  <div className="s-label">똑같은 문장</div>
                   <div className="s-value">
                     <CountUp value={result.groups.length} />
                     <small> 건</small>
                   </div>
                 </div>
                 <div className="stat-pill">
-                  <div className="s-label">파일 간 중복</div>
+                  <div className="s-label">다른 파일과 겹침</div>
                   <div className="s-value">
                     <CountUp value={result.groups.filter((g) => g.crossFile).length} />
                     <small> 건</small>
@@ -432,17 +432,15 @@ export default function Home() {
                 <p className="skip-note">
                   {(headerSkipped > 0 || labelSkipped > 0) && (
                     <>
-                      표 머리글 {headerSkipped.toLocaleString()}건
-                      {labelSkipped > 0 &&
-                        `과 마침표로 끝나지 않는 문구(제목·이름·조각) ${labelSkipped.toLocaleString()}건`}
-                      은 문장이 아니라서 검사에서 뺐습니다.{' '}
+                      제목이나 이름처럼 문장이 아닌 글{' '}
+                      {(headerSkipped + labelSkipped).toLocaleString()}건은 검사하지
+                      않았습니다.{' '}
                     </>
                   )}
-                  {result.formatReview?.reviewed > 0 &&
-                    `Solar 3 Pro가 애매한 문구 ${result.formatReview.reviewed.toLocaleString()}건을 검토해 마침표 누락 문장 ${(result.formatReview.missingPeriodRestored ?? 0).toLocaleString()}건을 비교에 포함했습니다.` +
-                      (result.formatReview.headerReincluded > 0
-                        ? ` 머리글로 잘못 분류됐던 문장 ${result.formatReview.headerReincluded.toLocaleString()}건도 되살렸습니다.`
-                        : '')}
+                  {(result.formatReview?.missingPeriodRestored ?? 0) > 0 &&
+                    `마침표가 빠진 문장 ${result.formatReview.missingPeriodRestored.toLocaleString()}건은 AI가 찾아서 함께 검사했습니다.`}
+                  {result.formatReview?.headerReincluded > 0 &&
+                    ` 표 첫 줄에 섞여 있던 문장 ${result.formatReview.headerReincluded.toLocaleString()}건도 함께 검사했습니다.`}
                   {result.formatReview?.error &&
                     ` (AI 서식 검토는 건너뛰었습니다: ${result.formatReview.error})`}
                 </p>
