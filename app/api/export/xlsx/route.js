@@ -47,13 +47,13 @@ export async function POST(req) {
     ['검사 파일', fileStats.map((f) => `${f.name} (문장 ${f.sentences}개)`).join('\n')],
     ['검사 대상 문장 수', `${totalSentences}개`],
     [
-      '서식으로 제외',
-      `표 머리글 ${fileStats.reduce((a, f) => a + (f.headerSkipped || 0), 0)}건, 제목형 문구 ${fileStats.reduce((a, f) => a + (f.labelSkipped || 0), 0)}건`,
+      '검사 제외',
+      `표 머리글 ${fileStats.reduce((a, f) => a + (f.headerSkipped || 0), 0)}건, 온전한 문장이 아닌 문구 ${fileStats.reduce((a, f) => a + (f.labelSkipped || 0), 0)}건`,
     ],
     [
-      'AI 서식 검토',
+      'AI 경계 검토',
       formatReview?.reviewed > 0
-        ? `경계 문구 ${formatReview.reviewed}건 검토 — 문장으로 복원 ${formatReview.reincluded}건, 서식으로 추가 제외 ${formatReview.excluded}건`
+        ? `제외 후보 ${formatReview.reviewed}건 검토 — 온전한 문장으로 복원 ${formatReview.reincluded}건`
         : `수행하지 않음${formatReview?.error ? ` (${formatReview.error})` : ''}`,
     ],
     ['중복 문장 그룹', `${groups.length}개`],

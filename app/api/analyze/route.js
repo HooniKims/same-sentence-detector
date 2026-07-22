@@ -35,28 +35,23 @@ export async function POST(req) {
         }
 
         send({ type: 'progress', pct: 62, message: '문장을 나누어 다듬는 중…', fileIndex: files.length });
-        const { excludedByRule, uncertainIncluded } = collectReviewCandidates(fileUnits);
+        const { excludedByRule } = collectReviewCandidates(fileUnits);
 
         send({
           type: 'progress',
           pct: 68,
-          message: `Solar 3 Pro가 경계 문구 ${excludedByRule.length + uncertainIncluded.length}건을 검토하는 중…`,
+          message: `Solar 3 Pro가 경계 문구 ${excludedByRule.length}건을 검토하는 중…`,
         });
-        const review = await reviewFormatPhrases([...excludedByRule, ...uncertainIncluded]);
+        const review = await reviewFormatPhrases(excludedByRule);
 
-        // 규칙이 뺀 것 중 AI가 '문장'이라 한 것 → 되살림.
-        // 규칙이 통과시킨 것 중 AI가 '서식'이라 한 것 → 제외.
+        // 규칙이 뺀 것 중 AI가 '온전한 문장'이라 한 것만 되살린다.
         const includeKeys = new Set(
           excludedByRule.filter((it) => review.decisions.get(it.key) === '문장').map((it) => it.key)
-        );
-        const excludeKeys = new Set(
-          uncertainIncluded.filter((it) => review.decisions.get(it.key) === '서식').map((it) => it.key)
         );
 
         send({ type: 'progress', pct: 76, message: '문장을 서로 맞대어 보는 중…' });
         const { groups, totalSentences, fileStats } = detectDuplicates(fileUnits, minLen, {
           includeKeys,
-          excludeKeys,
         });
 
         send({ type: 'progress', pct: 86, message: 'Solar 3 Pro가 종합 의견을 쓰는 중…' });
@@ -75,9 +70,8 @@ export async function POST(req) {
             ai,
             formatReview: {
               reviewed: review.reviewed,
-              candidates: excludedByRule.length + uncertainIncluded.length,
+              candidates: excludedByRule.length,
               reincluded: includeKeys.size,
-              excluded: excludeKeys.size,
               model: review.model,
               error: review.error,
             },
