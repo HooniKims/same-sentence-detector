@@ -428,6 +428,31 @@ button {
   transform: rotate(90deg);
 }
 
+.file-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 0 6px;
+}
+.file-count {
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+}
+.clear-files {
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.clear-files:hover {
+  color: #b34a26;
+}
+
 .opt-row {
   display: flex;
   align-items: center;
@@ -1215,7 +1240,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .guide-section-kicker {
   color: var(--guide-blue-dark);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
 }
 
@@ -1251,6 +1276,11 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   color: var(--guide-blue);
 }
 
+.guide-hero-question > span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .guide-hero-copy > p {
   color: var(--guide-muted);
   font-size: 17px;
@@ -1276,7 +1306,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   background: var(--guide-blue);
   color: #fff !important;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   box-shadow: 0 14px 28px rgba(67, 91, 216, 0.22);
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1306,6 +1336,21 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   margin-top: 32px;
   color: #73778d;
   font-size: 11px;
+}
+
+.guide-trust-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.guide-trust-row span::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #6f80da;
 }
 
 .guide-hero-visual {
@@ -1525,6 +1570,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .guide-final-cta h2 {
   margin: 0;
   font-size: clamp(36px, 4vw, 52px);
+  font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.055em;
 }
@@ -1576,6 +1622,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .guide-feature h3 {
   margin: 0 0 12px;
   font-size: 22px;
+  font-weight: 600;
   letter-spacing: -0.04em;
 }
 
@@ -1658,6 +1705,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .guide-step h3 {
   margin: 10px 0 13px;
   font-size: 20px;
+  font-weight: 600;
   line-height: 1.45;
   letter-spacing: -0.04em;
 }
@@ -1798,7 +1846,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   cursor: pointer;
   list-style: none;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .guide-faq summary::-webkit-details-marker { display: none; }

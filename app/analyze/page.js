@@ -395,21 +395,29 @@ export default function Home() {
                 </div>
 
                 {files.length > 0 && (
-                  <div className="file-list">
-                    {files.map((f) => (
-                      <div className="file-chip pop" key={f.name}>
-                        <span className="f-type">{fileExt(f.name)}</span>
-                        <span className="f-name">{f.name}</span>
-                        <button
-                          aria-label="파일 제거"
-                          title="파일 제거"
-                          onClick={() => setFiles((prev) => prev.filter((x) => x !== f))}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="file-list">
+                      {files.map((f) => (
+                        <div className="file-chip pop" key={f.name}>
+                          <span className="f-type">{fileExt(f.name)}</span>
+                          <span className="f-name">{f.name}</span>
+                          <button
+                            aria-label="파일 제거"
+                            title="파일 제거"
+                            onClick={() => setFiles((prev) => prev.filter((x) => x !== f))}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="file-actions">
+                      <span className="file-count">{files.length}개 선택됨</span>
+                      <button className="clear-files" onClick={() => setFiles([])}>
+                        파일 모두 지우기
+                      </button>
+                    </div>
+                  </>
                 )}
 
                 <button

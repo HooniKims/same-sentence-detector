@@ -4,35 +4,35 @@ const features = [
   {
     number: '01',
     title: '파일 안팎의 같은 문장',
-    body: '한 반 안에서 반복된 문장과 여러 반 파일 사이에 겹친 문장을 함께 찾아 위치까지 알려드립니다.',
+    body: '한 반 안에서 반복된 문장은 물론, 여러 반 파일에 겹쳐 들어간 문장도 찾아냅니다. 어느 파일의 어느 항목인지 함께 보여드립니다.',
   },
   {
     number: '02',
     title: '문장 부호 점검',
-    body: '마침표가 빠졌거나 문장 중간에 잘못 찍힌 것으로 보이는 부분도 따로 모아 확인할 수 있습니다.',
+    body: '마침표가 빠진 문장이나 문장 중간에 마침표가 잘못 들어간 듯한 부분도 따로 모아 보여드립니다.',
   },
   {
     number: '03',
     title: '한눈에 보는 결과',
-    body: '검사한 문장 수와 의심 문장, 발견 위치를 화면에서 보고 엑셀 또는 PDF로 내려받을 수 있습니다.',
+    body: '검사한 문장 수와 의심 문장, 발견 위치를 화면에서 바로 확인합니다. 필요하면 결과를 엑셀이나 PDF로 저장합니다.',
   },
 ];
 
 const steps = [
   {
     label: '내려받기',
-    title: '과목별 세부능력 및 특기사항 엑셀을 준비합니다',
-    body: '업무 화면의 ‘과목별 세부능력 및 특기사항’ 메뉴에서 반별 엑셀 파일을 내려받아 주세요.',
+    title: '과목별 세부능력 및 특기사항 엑셀을 준비해 주세요',
+    body: '업무 화면에서 ‘과목별 세부능력 및 특기사항’ 메뉴를 열고 반별 엑셀 파일을 내려받습니다.',
   },
   {
     label: '올리기',
-    title: '여러 반 파일을 한 번에 올립니다',
-    body: '파일을 끌어다 놓거나 눌러 선택할 수 있습니다. xlsx, xls, csv, pdf, hwpx 형식을 지원합니다.',
+    title: '여러 반 파일을 한꺼번에 올려 주세요',
+    body: '끌어다 놓아도 되고, 눌러서 골라도 됩니다. xlsx, xls, csv, pdf, hwpx 형식을 지원합니다.',
   },
   {
     label: '확인하기',
-    title: '분석 결과와 발견 위치를 확인합니다',
-    body: '겹치는 문장과 문장 부호 의심 부분을 살펴보고, 필요한 경우 결과 파일을 내려받아 검토합니다.',
+    title: '결과에서 확인할 곳을 살펴봅니다',
+    body: '겹치는 문장과 문장 부호를 다시 볼 곳을 살펴봅니다. 필요하면 결과 파일을 내려받아 검토합니다.',
   },
 ];
 
@@ -66,12 +66,15 @@ export default function GuideHome() {
           <h1>
             생활기록부 문장,
             <br />
-            <span>혹시 겹치지는 않았을까요?</span>
+            <span className="guide-hero-question">
+              <span>혹시 겹치지는</span>{' '}
+              <span>않았을까요?</span>
+            </span>
           </h1>
           <p>
-            반별로 내려받은 엑셀 파일을 한 번에 올리면 같은 문장을 찾아
+            반별 엑셀 파일을 한꺼번에 올려 보세요.
             <br className="desktop-break" />
-            어느 학생의 어느 항목인지 보기 쉽게 알려드립니다.
+            같은 문장을 찾아 어느 학생의 어느 항목에 있는지 보기 쉽게 정리해 드립니다.
           </p>
           <div className="guide-hero-actions">
             <a className="guide-primary" href={ANALYZE_URL}>
@@ -82,9 +85,9 @@ export default function GuideHome() {
             </a>
           </div>
           <div className="guide-trust-row" aria-label="서비스 특징">
-            <span>✓ 여러 파일 한 번에</span>
-            <span>✓ 원본 파일 수정 없음</span>
-            <span>✓ 엑셀·PDF 결과 저장</span>
+            <span>여러 파일 한꺼번에</span>
+            <span>원본 파일은 그대로</span>
+            <span>결과는 엑셀·PDF로</span>
           </div>
         </div>
 
@@ -112,7 +115,7 @@ export default function GuideHome() {
               <span>중복 문장</span>
               <b>발견 위치까지 표시</b>
             </div>
-            <p>같은 문장을 누르면 바로 복사할 수 있어요.</p>
+            <p>문장을 누르면 바로 복사됩니다.</p>
             <div className="guide-line"><i /><span /></div>
             <div className="guide-line short"><i /><span /></div>
           </div>
@@ -123,10 +126,10 @@ export default function GuideHome() {
       <section className="guide-intro" aria-labelledby="intro-title">
         <p className="guide-section-kicker">왜 만들었나요?</p>
         <div>
-          <h2 id="intro-title">한 문장씩 눈으로 대조하는 일을<br />조금 더 가볍게.</h2>
+          <h2 id="intro-title">한 문장씩 눈으로 대조하는 일,<br />조금은 덜 힘들게.</h2>
           <p>
-            여러 반의 기록을 마무리할 때, 비슷한 문장이 있는지 일일이 찾기는 어렵습니다.
-            이 도구는 문장을 빠짐없이 읽고 서로 비교해 선생님이 확인해야 할 곳만 모아 보여드립니다.
+            여러 반의 기록을 마무리하다 보면 비슷한 문장이 있는지 일일이 대조하기가 쉽지 않습니다.
+            모든 문장을 서로 비교한 뒤, 선생님이 다시 볼 곳만 추려 보여드립니다.
           </p>
         </div>
       </section>
@@ -144,8 +147,8 @@ export default function GuideHome() {
       <section className="guide-how" id="how" aria-labelledby="how-title">
         <div className="guide-section-heading">
           <p className="guide-section-kicker">사용 방법</p>
-          <h2 id="how-title">딱 세 단계면 됩니다</h2>
-          <p>별도의 설치나 회원가입 없이, 내려받은 파일 그대로 시작하세요.</p>
+          <h2 id="how-title">세 단계면 끝납니다</h2>
+          <p>설치도, 회원가입도 필요 없습니다. 내려받은 파일 그대로 시작하세요.</p>
         </div>
         <div className="guide-steps">
           {steps.map((step, index) => (
@@ -162,10 +165,10 @@ export default function GuideHome() {
       <section className="guide-demo" id="result" aria-labelledby="demo-title">
         <div className="guide-demo-copy">
           <p className="guide-section-kicker">실제 사용 화면</p>
-          <h2 id="demo-title">파일을 올리고,<br />결과만 확인하세요</h2>
+          <h2 id="demo-title">파일을 올리면,<br />확인할 곳이 보입니다</h2>
           <p>
-            테스트용 1학년 국어 과목 세특 엑셀 5개를 실제로 분석했습니다.
-            원본을 바꾸지 않고 문장 수, 중복 여부, 문장 부호 의심 부분을 정리해 보여줍니다.
+            테스트용 1학년 국어 과목 세특 엑셀 5개를 직접 분석해 보았습니다.
+            원본 파일은 그대로 두고 문장 수와 중복 여부, 문장 부호를 다시 살펴볼 곳을 정리했습니다.
           </p>
           <a className="guide-text-link" href={ANALYZE_URL}>내 파일로 직접 확인하기 →</a>
         </div>
@@ -188,20 +191,20 @@ export default function GuideHome() {
       <section className="guide-result-explain" aria-labelledby="result-title">
         <div>
           <p className="guide-section-kicker">결과는 이렇게 읽어요</p>
-          <h2 id="result-title">수정할 곳을 찾는 데<br />필요한 정보만</h2>
+          <h2 id="result-title">수정할 곳을 찾을 때<br />필요한 정보만</h2>
         </div>
         <div className="guide-result-list">
           <div>
             <span>같은 문장</span>
-            <p>똑같은 문장과 반복 횟수, 발견된 파일과 학생 위치를 함께 표시합니다.</p>
+            <p>같은 문장과 반복 횟수는 물론, 어느 파일의 어느 학생에게서 발견됐는지도 함께 보여드립니다.</p>
           </div>
           <div>
             <span>문장 부호</span>
-            <p>마침표 누락이나 문장 중간의 잘못된 마침표처럼 다시 볼 부분을 따로 모읍니다.</p>
+            <p>마침표가 빠졌거나 문장 중간에 잘못 들어간 것으로 보이는 부분을 따로 모아 보여드립니다.</p>
           </div>
           <div>
             <span>결과 저장</span>
-            <p>전체 목록이 필요하면 엑셀 또는 PDF로 내려받아 편한 방식으로 검토할 수 있습니다.</p>
+            <p>전체 목록이 필요할 때는 엑셀이나 PDF로 내려받아 편한 방식으로 살펴보면 됩니다.</p>
           </div>
         </div>
       </section>
@@ -214,26 +217,26 @@ export default function GuideHome() {
         <div className="guide-faq-list">
           <details>
             <summary>어떤 파일을 올리면 되나요?<span>＋</span></summary>
-            <p>‘과목별 세부능력 및 특기사항’ 메뉴에서 내려받은 반별 엑셀 파일을 그대로 올리면 됩니다. xlsx 외에도 xls, csv, pdf, hwpx 파일을 지원합니다.</p>
+            <p>‘과목별 세부능력 및 특기사항’ 메뉴에서 내려받은 반별 엑셀 파일을 그대로 올리면 됩니다. xlsx뿐 아니라 xls, csv, pdf, hwpx 파일도 지원합니다.</p>
           </details>
           <details>
             <summary>여러 반 파일을 같이 검사할 수 있나요?<span>＋</span></summary>
-            <p>네. 여러 파일을 한 번에 선택하면 한 파일 안의 반복뿐 아니라 서로 다른 파일 사이의 같은 문장도 함께 찾습니다.</p>
+            <p>네. 여러 파일을 한꺼번에 선택하면 한 파일 안의 반복은 물론, 서로 다른 파일에 겹친 문장도 함께 찾습니다.</p>
           </details>
           <details>
             <summary>원본 엑셀 파일이 바뀌지는 않나요?<span>＋</span></summary>
-            <p>바뀌지 않습니다. 원본은 그대로 두고, 분석 결과만 화면과 별도의 결과 파일로 제공합니다.</p>
+            <p>바뀌지 않습니다. 원본은 그대로 남고, 분석 결과는 화면에서 확인하거나 별도 파일로 내려받으면 됩니다.</p>
           </details>
           <details>
             <summary>결과가 곧 오류라는 뜻인가요?<span>＋</span></summary>
-            <p>아닙니다. 같은 문장이나 문장 부호 의심 부분을 검토 대상으로 보여드리는 도구입니다. 최종 판단과 수정은 문맥을 살펴본 뒤 선생님께서 해주세요.</p>
+            <p>아닙니다. 같은 문장이나 문장 부호를 다시 볼 곳을 추려 드리는 도구입니다. 앞뒤 문맥을 살펴본 뒤 선생님께서 최종 판단해 주세요.</p>
           </details>
         </div>
       </section>
 
       <section className="guide-final-cta">
         <div className="guide-final-icon" aria-hidden="true">문장<br />✓</div>
-        <p>기록을 마무리하기 전, 한 번 더 안심할 수 있도록</p>
+        <p>기록을 마무리하기 전, 마지막으로 한 번 더</p>
         <h2>지금 내 파일을 확인해 보세요.</h2>
         <a className="guide-primary dark" href={ANALYZE_URL}>
           같은 문장 찾기 시작 <span aria-hidden="true">→</span>
