@@ -27,7 +27,7 @@ const steps = [
   {
     label: '올리기',
     title: '여러 반 파일을 한꺼번에 올려 주세요',
-    body: '끌어다 놓아도 되고, 눌러서 골라도 됩니다. xlsx, xls, csv, pdf, hwpx 형식을 지원합니다.',
+    body: '끌어다 놓아도 되고 눌러서 골라도 됩니다. xlsx, xls, csv, pdf, hwpx 형식을 지원합니다.',
   },
   {
     label: '확인하기',
@@ -225,7 +225,7 @@ export default function GuideHome() {
           </details>
           <details>
             <summary>원본 엑셀 파일이 바뀌지는 않나요?<span>＋</span></summary>
-            <p>바뀌지 않습니다. 원본은 그대로 남고, 분석 결과는 화면에서 확인하거나 별도 파일로 내려받으면 됩니다.</p>
+            <p>바뀌지 않습니다. 원본은 그대로 남습니다. 분석 결과는 화면에서 확인하거나 별도 파일로 내려받으면 됩니다.</p>
           </details>
           <details>
             <summary>결과가 곧 오류라는 뜻인가요?<span>＋</span></summary>
