@@ -509,9 +509,13 @@ export default function Home() {
                         >
                           <td className="t-num">{i + 1}</td>
                           <td>
-                            {g.sentence}
-                            {g.crossFile && <span className="cross-tag">파일 간 중복</span>}
-                            {g.missingPeriod && <span className="mp-tag">마침표 누락</span>}
+                            <div>{g.sentence}</div>
+                            {(g.crossFile || g.missingPeriod) && (
+                              <div className="tag-row">
+                                {g.crossFile && <span className="cross-tag">파일 간 중복</span>}
+                                {g.missingPeriod && <span className="mp-tag">마침표 누락</span>}
+                              </div>
+                            )}
                           </td>
                           <td className="t-count">{g.count}회</td>
                           <td>

@@ -798,6 +798,18 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .loc-pos { color: var(--color-graphite); font-size: 0.7812rem; }
 .loc-more { color: var(--color-smoke); font-size: 0.75rem; margin-top: 4px; }
 
+/* 배지는 항상 문장 아래 줄에 정렬 */
+.tag-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.tag-row .cross-tag,
+.tag-row .mp-tag {
+  margin-left: 0;
+}
+
 .mp-tag {
   display: inline-block;
   font-size: 0.6875rem;
