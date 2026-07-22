@@ -4,7 +4,6 @@ import {
   generateAiSummary,
   reviewHeaderCandidates,
   reviewMissingPeriods,
-  reviewDuplicateGroups,
 } from '../../../lib/solar';
 
 export const runtime = 'nodejs';
@@ -66,23 +65,10 @@ export async function POST(req) {
         const includeKeys = new Set([...headerKeys, ...tailKeys]);
 
         send({ type: 'progress', pct: 76, message: '문장을 서로 맞대어 보는 중…' });
-        const detected = detectDuplicates(fileUnits, minLen, { includeKeys });
-        const { totalSentences, fileStats, missingPeriods } = detected;
-        let groups = detected.groups;
-
-        // 중복으로 잡힌 문장을 한 번 더 확인한다 — 문장 중간에 잘못 찍힌
-        // 마침표로 잘린 조각(예: "글감.")이면 의심 목록에서 뺀다.
-        let fragmentDropped = 0;
-        if (groups.length > 0) {
-          send({ type: 'progress', pct: 82, message: '의심되는 문장을 한 번 더 확인하는 중…' });
-          const groupItems = groups.map((g, i) => ({ key: String(i), text: g.sentence }));
-          const groupReview = await reviewDuplicateGroups(groupItems);
-          if (groupReview.decisions.size > 0) {
-            const kept = groups.filter((_, i) => groupReview.decisions.get(String(i)) !== '조각');
-            fragmentDropped = groups.length - kept.length;
-            groups = kept;
-          }
-        }
+        const { groups, totalSentences, fileStats, missingPeriods, allSentences } =
+          detectDuplicates(fileUnits, minLen, { includeKeys });
+        // 문장 온전성(오타 마침표) 전수 검토는 서버 시간 제한을 피하려고
+        // 클라이언트가 /api/refine을 나눠 호출하는 방식으로 진행한다.
 
         send({ type: 'progress', pct: 86, message: 'Solar 3 Pro가 종합 의견을 쓰는 중…' });
         const ai =
@@ -94,7 +80,7 @@ export async function POST(req) {
               }
             : await generateAiSummary({ fileStats, totalSentences, groups });
 
-        send({ type: 'progress', pct: 98, message: '보고서를 마무리하는 중…' });
+        send({ type: 'progress', pct: 88, message: '보고서를 마무리하는 중…' });
         send({
           type: 'result',
           data: {
@@ -106,12 +92,14 @@ export async function POST(req) {
             duplicateSentenceCount: groups.reduce((a, g) => a + g.count, 0),
             ai,
             missingPeriods,
+            typoSuspects: [],
+            allSentences,
             formatReview: {
               reviewed: headerReview.reviewed + tailReview.reviewed,
               candidates: candidateCount,
               headerReincluded: headerKeys.length,
               missingPeriodRestored: tailKeys.length,
-              fragmentDropped,
+              fragmentDropped: 0,
               model: tailReview.model || headerReview.model,
               error: tailReview.error || headerReview.error,
             },

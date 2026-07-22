@@ -874,6 +874,57 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   flex-shrink: 0;
 }
 
+/* 잘못 입력(중간 마침표) 의심 카드 */
+.typo-card {
+  margin-top: 24px;
+  border: 1px solid #f0b39e;
+  background: rgba(255, 148, 115, 0.12);
+  border-radius: 24px;
+  padding: 28px 32px;
+}
+.typo-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.typo-count {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  border: 1px solid #f0b39e;
+  border-radius: var(--radius-pills);
+  padding: 3px 10px;
+  color: #b34a26;
+}
+.typo-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.typo-card li {
+  border-top: 1px solid rgba(240, 179, 158, 0.5);
+  padding-top: 10px;
+}
+.typo-where {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.typo-context {
+  font-size: 0.8125rem;
+  color: var(--color-graphite);
+}
+.typo-context mark {
+  background: rgba(255, 148, 115, 0.35);
+  color: #8c3512;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-weight: 600;
+}
+
 .ai-card {
   margin-top: 24px;
   background: var(--color-periwinkle-mist);

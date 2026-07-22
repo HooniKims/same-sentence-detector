@@ -35,6 +35,7 @@ export async function POST(req) {
     analyzedAt,
     formatReview,
     missingPeriods,
+    typoSuspects,
   } = await req.json();
 
   const wb = new ExcelJS.Workbook();
@@ -142,7 +143,10 @@ export async function POST(req) {
 
   groups.forEach((g, i) => {
     const where = g.occurrences
-      .map((o) => `${o.file} · ${o.location}${o.missingPeriod ? ' (마침표 누락)' : ''}`)
+      .map(
+        (o) =>
+          `${o.file} · ${o.friendly || o.location}${o.missingPeriod ? ' (마침표 누락)' : ''}`
+      )
       .join('\n');
     const row = s2.addRow({
       no: i + 1,
@@ -196,7 +200,7 @@ export async function POST(req) {
       c.border = BORDER;
     });
     missingPeriods.forEach((m, i) => {
-      const where = m.occurrences.map((o) => `${o.file} · ${o.location}`).join('\n');
+      const where = m.occurrences.map((o) => `${o.file} · ${o.friendly || o.location}`).join('\n');
       const row = s3.addRow({ no: i + 1, sentence: m.sentence, where });
       row.eachCell((c, col) => {
         c.font = { name: FONT, size: 10, color: { argb: INK } };
@@ -207,6 +211,55 @@ export async function POST(req) {
       });
       row.height = Math.max(estimateHeight(m.sentence, 70), estimateHeight(where, 56));
     });
+  }
+
+  /* ── 시트 4: 잘못 입력 의심 (문장 중간 마침표) ── */
+  if (Array.isArray(typoSuspects) && typoSuspects.length > 0) {
+    const s4 = wb.addWorksheet('잘못 입력 의심', {
+      views: [{ state: 'frozen', ySplit: 1, showGridLines: false }],
+    });
+    s4.columns = [
+      { header: '번호', key: 'no', width: 6 },
+      { header: '의심 부분', key: 'frag', width: 34 },
+      { header: '위치', key: 'where', width: 40 },
+      { header: '앞뒤 문맥', key: 'ctx', width: 60 },
+    ];
+    const h4 = s4.getRow(1);
+    h4.height = 24;
+    h4.eachCell((c) => {
+      c.font = { name: FONT, size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: INK } };
+      c.alignment = { vertical: 'middle', horizontal: 'center' };
+      c.border = BORDER;
+    });
+    let no = 0;
+    for (const t of typoSuspects) {
+      for (const o of t.occurrences) {
+        no++;
+        const ctx = `${o.ctxBefore || ''}${t.sentence}${o.ctxAfter || ''}`;
+        const row = s4.addRow({
+          no,
+          frag: t.sentence,
+          where: `${o.file} · ${o.friendly || o.location}`,
+          ctx,
+        });
+        row.eachCell((c, col) => {
+          c.font = { name: FONT, size: 10, color: { argb: INK } };
+          c.border = BORDER;
+          c.alignment =
+            col === 1
+              ? { vertical: 'top', horizontal: 'center' }
+              : { vertical: 'top', wrapText: true };
+          if (no % 2 === 0)
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PARCHMENT } };
+        });
+        row.height = Math.max(
+          estimateHeight(t.sentence, 34),
+          estimateHeight(o.friendly || o.location, 40),
+          estimateHeight(ctx, 60)
+        );
+      }
+    }
   }
 
   const buf = await wb.xlsx.writeBuffer();

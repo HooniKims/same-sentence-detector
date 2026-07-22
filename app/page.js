@@ -6,14 +6,73 @@ const ACCEPT = '.xlsx,.xls,.csv,.pdf,.hwpx';
 const STEPS = [
   { at: 5, label: '파일 받기' },
   { at: 30, label: '내용 읽기' },
-  { at: 68, label: 'AI 머리글 검토' },
+  { at: 68, label: 'AI 검토' },
   { at: 76, label: '문장 대조' },
   { at: 86, label: 'AI 의견' },
-  { at: 99, label: '보고서 완성' },
+  { at: 92, label: '오타 확인' },
+  { at: 99, label: '완성' },
 ];
 
 function fileExt(name) {
   return name.split('.').pop().toUpperCase();
+}
+
+/**
+ * 잘못 찍힌 마침표로 잘린 조각을 AI로 전수 확인한다.
+ * 문장을 120개씩 나눠 /api/refine을 병렬 호출하고, 조각으로 판정된 것은
+ * (1) 중복 목록에서 빼고 (2) '잘못 입력 의심' 목록으로 만든다.
+ */
+async function refineTypos(result, onProgress) {
+  const all = (result.allSentences || []).filter((s) =>
+    /[.!?…。]["'」』)\]]?$/.test(s.sentence.trim())
+  );
+  if (all.length === 0) return;
+  onProgress(92, `문장 ${all.length.toLocaleString()}개가 온전한지 하나하나 확인하는 중…`);
+
+  const chunks = [];
+  for (let i = 0; i < all.length; i += 120) chunks.push(all.slice(i, i + 120));
+  const responses = await Promise.all(
+    chunks.map((chunk) =>
+      fetch('/api/refine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: chunk.map((s) => ({ key: s.key, text: s.sentence })) }),
+      })
+        .then((r) => (r.ok ? r.json() : { decisions: [] }))
+        .catch(() => ({ decisions: [] }))
+    )
+  );
+
+  const decisions = new Map();
+  for (const res of responses) {
+    for (const [k, v] of res.decisions || []) decisions.set(k, v);
+  }
+  if (decisions.size === 0) return;
+
+  const fragKeys = new Set(
+    all.filter((s) => decisions.get(s.key) === '조각').map((s) => s.key)
+  );
+  result.typoSuspects = all
+    .filter((s) => fragKeys.has(s.key))
+    .map((s) => ({
+      sentence: s.sentence,
+      occurrences: s.occurrences.map((o) => ({
+        file: o.file,
+        location: o.location,
+        friendly: o.friendly,
+        ctxBefore: o.ctxBefore,
+        ctxAfter: o.ctxAfter,
+      })),
+    }))
+    .sort((a, b) => b.occurrences.length - a.occurrences.length);
+
+  const before = result.groups.length;
+  result.groups = result.groups.filter((g) => !fragKeys.has(g.key));
+  result.duplicateSentenceCount = result.groups.reduce((a, g) => a + g.count, 0);
+  result.formatReview = {
+    ...result.formatReview,
+    fragmentDropped: before - result.groups.length,
+  };
 }
 
 /* 숫자가 0에서 목표값까지 차오르는 카운트업 */
@@ -152,6 +211,15 @@ export default function Home() {
       }
 
       if (!finalResult) throw new Error('분석 결과를 받지 못했습니다.');
+
+      // 오타 마침표 전수 검토 — 문장을 청크로 나눠 병렬 호출한다.
+      // 실패해도 분석 결과는 그대로 보여준다.
+      await refineTypos(finalResult, (p, m) => {
+        setPct(p);
+        setMsg(m);
+      });
+      delete finalResult.allSentences;
+
       setPct(100);
       setDoneFiles(files.length - 1);
       setMsg('완료');
@@ -536,8 +604,8 @@ export default function Home() {
                             {g.occurrences.slice(0, 8).map((o, j) => (
                               <div className="loc-line" key={j}>
                                 <span className="loc-file">{o.file}</span>
-                                <span className="loc-pos">
-                                  {o.location}
+                                <span className="loc-pos" title={o.location}>
+                                  {o.friendly || o.location}
                                   {o.missingPeriod && ' · 마침표 누락'}
                                 </span>
                               </div>
@@ -572,7 +640,7 @@ export default function Home() {
                         <span className="mp-locs">
                           {m.occurrences
                             .slice(0, 4)
-                            .map((o) => `${o.file} · ${o.location}`)
+                            .map((o) => `${o.file} · ${o.friendly || o.location}`)
                             .join(', ')}
                           {m.occurrences.length > 4 && ` 외 ${m.occurrences.length - 4}곳`}
                         </span>
@@ -582,6 +650,43 @@ export default function Home() {
                   {result.missingPeriods.length > 30 && (
                     <p className="mp-desc">
                       외 {result.missingPeriods.length - 30}건 — 전체 목록은 다운로드 파일에
+                      있습니다.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {result.typoSuspects?.length > 0 && (
+                <div className="typo-card">
+                  <h3>
+                    잘못 입력이 의심되는 부분
+                    <span className="typo-count">
+                      {result.typoSuspects.reduce((a, t) => a + t.occurrences.length, 0)}곳
+                    </span>
+                  </h3>
+                  <p className="mp-desc">
+                    문장 중간에 마침표가 잘못 찍힌 것으로 보입니다. 아래 위치에서 앞뒤
+                    문맥을 보고 고쳐 주세요. (이 조각들은 중복 검사에서 제외했습니다)
+                  </p>
+                  <ul>
+                    {result.typoSuspects.slice(0, 20).flatMap((t, i) =>
+                      t.occurrences.slice(0, 5).map((o, j) => (
+                        <li key={`${i}-${j}`}>
+                          <div className="typo-where">
+                            {o.file} · {o.friendly || o.location}
+                          </div>
+                          <div className="typo-context">
+                            {o.ctxBefore}
+                            <mark>{t.sentence}</mark>
+                            {o.ctxAfter}
+                          </div>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                  {result.typoSuspects.length > 20 && (
+                    <p className="mp-desc">
+                      외 {result.typoSuspects.length - 20}건 — 전체 목록은 다운로드 파일에
                       있습니다.
                     </p>
                   )}
