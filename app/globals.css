@@ -647,6 +647,7 @@ button {
 }
 .verdict.clean { background: rgba(167, 252, 205, 0.35); border-color: #8fd8b0; }
 .verdict.dirty { background: rgba(255, 148, 115, 0.22); border-color: #f0b39e; }
+.verdict.empty { background: rgba(236, 218, 152, 0.25); border-color: #d9c26a; }
 .verdict .v-icon { font-size: 22px; }
 
 .stat-row {

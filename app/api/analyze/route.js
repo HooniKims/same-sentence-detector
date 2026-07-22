@@ -72,7 +72,14 @@ export async function POST(req) {
         );
 
         send({ type: 'progress', pct: 86, message: 'Solar 3 Pro가 종합 의견을 쓰는 중…' });
-        const ai = await generateAiSummary({ fileStats, totalSentences, groups });
+        const ai =
+          totalSentences === 0
+            ? {
+                text: '- 파일에서 검사할 문장을 찾지 못해 의견을 쓰지 않았습니다.\n- 아직 기록이 입력되지 않은 빈 양식이거나, 문장이 마침표 없이 끝났을 수 있습니다.\n- 기록을 입력한 뒤 다시 검사해 주세요.',
+                model: null,
+                error: null,
+              }
+            : await generateAiSummary({ fileStats, totalSentences, groups });
 
         send({ type: 'progress', pct: 98, message: '보고서를 마무리하는 중…' });
         send({

@@ -424,11 +424,23 @@ export default function Home() {
 
           {phase === 'done' && result && (
             <div className="results">
-              <div className={`verdict ${result.groups.length === 0 ? 'clean' : 'dirty'}`}>
-                <span className="v-icon">{result.groups.length === 0 ? '✓' : '!'}</span>
-                {result.groups.length === 0
-                  ? `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했습니다. 겹치는 문장이 하나도 없습니다.`
-                  : `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했고, 이 중 ${result.duplicateSentenceCount.toLocaleString()}개가 다른 곳과 똑같습니다. 아래에서 확인해 주세요.`}
+              <div
+                className={`verdict ${
+                  result.totalSentences === 0
+                    ? 'empty'
+                    : result.groups.length === 0
+                      ? 'clean'
+                      : 'dirty'
+                }`}
+              >
+                <span className="v-icon">
+                  {result.totalSentences === 0 ? '?' : result.groups.length === 0 ? '✓' : '!'}
+                </span>
+                {result.totalSentences === 0
+                  ? '검사할 문장을 찾지 못했습니다. 아직 기록이 없는 빈 양식이 아닌지 확인해 주세요.'
+                  : result.groups.length === 0
+                    ? `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했습니다. 겹치는 문장이 하나도 없습니다.`
+                    : `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했고, 이 중 ${result.duplicateSentenceCount.toLocaleString()}개가 다른 곳과 똑같습니다. 아래에서 확인해 주세요.`}
               </div>
 
               <div className="stat-row">
