@@ -53,7 +53,8 @@ export async function POST(req) {
   const meta = [
     ['분석 일시', dt.toLocaleString('ko-KR')],
     ['검사 파일', fileStats.map((f) => `${f.name} (문장 ${f.sentences}개)`).join('\n')],
-    ['검사 대상 문장 수', `${totalSentences}개`],
+    ['총 검사한 문장', `${totalSentences}개 (문장은 하나도 빠짐없이 서로 비교)`],
+    ['의심되는 문장', `${duplicateSentenceCount}개`],
     [
       '검사 제외',
       `표 머리글 ${fileStats.reduce((a, f) => a + (f.headerSkipped || 0), 0)}건, 마침표로 끝나지 않는 문구 ${fileStats.reduce((a, f) => a + (f.labelSkipped || 0), 0)}건`,
@@ -64,8 +65,7 @@ export async function POST(req) {
         ? `애매한 문구 ${formatReview.reviewed}건 검토 — 마침표 누락 문장 ${formatReview.missingPeriodRestored ?? 0}건 비교 포함, 머리글 오분류 복원 ${formatReview.headerReincluded ?? 0}건`
         : `검토할 후보 없음${formatReview?.error ? ` (${formatReview.error})` : ''}`,
     ],
-    ['중복 문장 그룹', `${groups.length}개`],
-    ['중복 발생 총 횟수', `${duplicateSentenceCount}회`],
+    ['중복 문장 종류', `${groups.length}개`],
     [
       '판정',
       groups.length === 0

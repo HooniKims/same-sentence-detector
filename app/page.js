@@ -427,8 +427,8 @@ export default function Home() {
               <div className={`verdict ${result.groups.length === 0 ? 'clean' : 'dirty'}`}>
                 <span className="v-icon">{result.groups.length === 0 ? '✓' : '!'}</span>
                 {result.groups.length === 0
-                  ? '겹치는 문장이 없습니다. 모든 문장이 서로 다릅니다.'
-                  : `똑같은 문장이 ${result.groups.length}건 있습니다. 아래에서 확인해 주세요.`}
+                  ? `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했습니다. 겹치는 문장이 하나도 없습니다.`
+                  : `문장 ${result.totalSentences.toLocaleString()}개를 모두 검사했고, 이 중 ${result.duplicateSentenceCount.toLocaleString()}개가 다른 곳과 똑같습니다. 아래에서 확인해 주세요.`}
               </div>
 
               <div className="stat-row">
@@ -440,16 +440,16 @@ export default function Home() {
                     tip: '이번 검사에 올린 파일 수입니다.',
                   },
                   {
-                    label: '검사한 문장',
+                    label: '총 검사한 문장',
                     value: result.totalSentences,
                     unit: '개',
-                    tip: '파일에서 찾아 서로 비교한 문장 수입니다. 제목이나 이름처럼 문장이 아닌 글은 빼고 센 숫자예요.',
+                    tip: '파일에서 찾은 문장을 하나도 빠짐없이 읽고 서로 비교한 수입니다. 제목이나 이름처럼 문장이 아닌 글만 빼고 전부 검사했어요.',
                   },
                   {
-                    label: '똑같은 문장',
-                    value: result.groups.length,
-                    unit: '건',
-                    tip: '두 번 이상 반복된 문장의 수입니다. 1건이라도 있으면 아래 표에서 어디에 있는지 확인할 수 있어요.',
+                    label: '의심되는 문장',
+                    value: result.duplicateSentenceCount,
+                    unit: '개',
+                    tip: '총 검사한 문장 가운데 다른 곳과 똑같아서 확인이 필요한 문장 수입니다. 어디에 있는지는 아래 표에 나와요.',
                   },
                   {
                     label: '다른 파일과 겹침',
