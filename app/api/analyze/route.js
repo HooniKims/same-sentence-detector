@@ -4,6 +4,7 @@ import {
   generateAiSummary,
   reviewHeaderCandidates,
   reviewMissingPeriods,
+  reviewDuplicateGroups,
 } from '../../../lib/solar';
 
 export const runtime = 'nodejs';
@@ -65,11 +66,23 @@ export async function POST(req) {
         const includeKeys = new Set([...headerKeys, ...tailKeys]);
 
         send({ type: 'progress', pct: 76, message: '문장을 서로 맞대어 보는 중…' });
-        const { groups, totalSentences, fileStats, missingPeriods } = detectDuplicates(
-          fileUnits,
-          minLen,
-          { includeKeys }
-        );
+        const detected = detectDuplicates(fileUnits, minLen, { includeKeys });
+        const { totalSentences, fileStats, missingPeriods } = detected;
+        let groups = detected.groups;
+
+        // 중복으로 잡힌 문장을 한 번 더 확인한다 — 문장 중간에 잘못 찍힌
+        // 마침표로 잘린 조각(예: "글감.")이면 의심 목록에서 뺀다.
+        let fragmentDropped = 0;
+        if (groups.length > 0) {
+          send({ type: 'progress', pct: 82, message: '의심되는 문장을 한 번 더 확인하는 중…' });
+          const groupItems = groups.map((g, i) => ({ key: String(i), text: g.sentence }));
+          const groupReview = await reviewDuplicateGroups(groupItems);
+          if (groupReview.decisions.size > 0) {
+            const kept = groups.filter((_, i) => groupReview.decisions.get(String(i)) !== '조각');
+            fragmentDropped = groups.length - kept.length;
+            groups = kept;
+          }
+        }
 
         send({ type: 'progress', pct: 86, message: 'Solar 3 Pro가 종합 의견을 쓰는 중…' });
         const ai =
@@ -98,6 +111,7 @@ export async function POST(req) {
               candidates: candidateCount,
               headerReincluded: headerKeys.length,
               missingPeriodRestored: tailKeys.length,
+              fragmentDropped,
               model: tailReview.model || headerReview.model,
               error: tailReview.error || headerReview.error,
             },

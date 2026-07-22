@@ -496,6 +496,8 @@ export default function Home() {
                     `마침표가 빠진 문장 ${result.formatReview.missingPeriodRestored.toLocaleString()}건은 AI가 찾아서 함께 검사했습니다.`}
                   {result.formatReview?.headerReincluded > 0 &&
                     ` 표 첫 줄에 섞여 있던 문장 ${result.formatReview.headerReincluded.toLocaleString()}건도 함께 검사했습니다.`}
+                  {result.formatReview?.fragmentDropped > 0 &&
+                    ` 잘못 찍힌 마침표로 잘린 조각 ${result.formatReview.fragmentDropped.toLocaleString()}건은 문장이 아니라서 의심 목록에서 뺐습니다.`}
                   {result.formatReview?.error &&
                     ` (AI 서식 검토는 건너뛰었습니다: ${result.formatReview.error})`}
                 </p>

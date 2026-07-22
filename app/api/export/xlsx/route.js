@@ -61,9 +61,16 @@ export async function POST(req) {
     ],
     [
       'AI 검토',
-      formatReview?.reviewed > 0
-        ? `애매한 문구 ${formatReview.reviewed}건 검토 — 마침표 누락 문장 ${formatReview.missingPeriodRestored ?? 0}건 비교 포함, 머리글 오분류 복원 ${formatReview.headerReincluded ?? 0}건`
-        : `검토할 후보 없음${formatReview?.error ? ` (${formatReview.error})` : ''}`,
+      [
+        formatReview?.reviewed > 0
+          ? `애매한 문구 ${formatReview.reviewed}건 검토 (마침표 누락 문장 ${formatReview.missingPeriodRestored ?? 0}건 포함, 머리글 복원 ${formatReview.headerReincluded ?? 0}건)`
+          : `검토할 후보 없음${formatReview?.error ? ` (${formatReview.error})` : ''}`,
+        formatReview?.fragmentDropped > 0
+          ? `잘린 조각 ${formatReview.fragmentDropped}건은 의심 목록에서 제외`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(', '),
     ],
     ['중복 문장 종류', `${groups.length}개`],
     [
