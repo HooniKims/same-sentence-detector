@@ -398,34 +398,43 @@ export default function Home() {
               </div>
 
               <div className="stat-row">
-                <div className="stat-pill">
-                  <div className="s-label">검사한 파일</div>
-                  <div className="s-value">
-                    <CountUp value={result.fileStats.length} />
-                    <small> 개</small>
+                {[
+                  {
+                    label: '검사한 파일',
+                    value: result.fileStats.length,
+                    unit: '개',
+                    tip: '이번 검사에 올린 파일 수입니다.',
+                  },
+                  {
+                    label: '검사한 문장',
+                    value: result.totalSentences,
+                    unit: '개',
+                    tip: '파일에서 찾아 서로 비교한 문장 수입니다. 제목이나 이름처럼 문장이 아닌 글은 빼고 센 숫자예요.',
+                  },
+                  {
+                    label: '똑같은 문장',
+                    value: result.groups.length,
+                    unit: '건',
+                    tip: '두 번 이상 반복된 문장의 수입니다. 1건이라도 있으면 아래 표에서 어디에 있는지 확인할 수 있어요.',
+                  },
+                  {
+                    label: '다른 파일과 겹침',
+                    value: result.groups.filter((g) => g.crossFile).length,
+                    unit: '건',
+                    tip: '서로 다른 파일 사이에서 겹친 문장 수입니다. 한 파일 안에서만 반복된 것보다 더 주의가 필요해요.',
+                  },
+                ].map((s) => (
+                  <div className="stat-pill" key={s.label}>
+                    <div className="s-label">{s.label}</div>
+                    <div className="s-value">
+                      <CountUp value={s.value} />
+                      <small> {s.unit}</small>
+                    </div>
+                    <div className="stat-tip" role="tooltip">
+                      {s.tip}
+                    </div>
                   </div>
-                </div>
-                <div className="stat-pill">
-                  <div className="s-label">검사한 문장</div>
-                  <div className="s-value">
-                    <CountUp value={result.totalSentences} />
-                    <small> 개</small>
-                  </div>
-                </div>
-                <div className="stat-pill">
-                  <div className="s-label">똑같은 문장</div>
-                  <div className="s-value">
-                    <CountUp value={result.groups.length} />
-                    <small> 건</small>
-                  </div>
-                </div>
-                <div className="stat-pill">
-                  <div className="s-label">다른 파일과 겹침</div>
-                  <div className="s-value">
-                    <CountUp value={result.groups.filter((g) => g.crossFile).length} />
-                    <small> 건</small>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {(headerSkipped > 0 || labelSkipped > 0 || result.formatReview?.reviewed > 0) && (

@@ -623,12 +623,55 @@ button {
   margin-bottom: 24px;
 }
 .stat-pill {
+  position: relative;
   flex: 1 1 120px;
   border: 1px solid var(--color-ash);
   border-radius: 20px;
   padding: 16px 20px;
   background: rgba(255, 255, 255, 0.45);
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, background 0.2s;
+}
+.stat-tip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 230px;
+  max-width: 60vw;
+  background: var(--color-off-black);
+  color: #fff;
+  font-size: 12.5px;
+  line-height: 1.45;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 20;
+}
+.stat-tip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 24px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-off-black);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+.stat-pill:last-child .stat-tip {
+  left: auto;
+  right: 0;
+}
+.stat-pill:last-child .stat-tip::before {
+  left: auto;
+  right: 24px;
+}
+.stat-pill:hover .stat-tip {
+  opacity: 1;
+  transform: translateY(0);
 }
 .stat-pill:hover {
   transform: translateY(-3px);
