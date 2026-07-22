@@ -6,7 +6,7 @@ const ACCEPT = '.xlsx,.xls,.csv,.pdf,.hwpx';
 const STEPS = [
   { at: 5, label: '파일 받기' },
   { at: 30, label: '내용 읽기' },
-  { at: 68, label: 'AI 서식 검토' },
+  { at: 68, label: 'AI 머리글 검토' },
   { at: 76, label: '문장 대조' },
   { at: 86, label: 'AI 의견' },
   { at: 99, label: '보고서 완성' },
@@ -256,8 +256,8 @@ export default function Home() {
             <div className="badge">Sentence Duplicate Check</div>
             <h1 className="hero-title">무엇이 무엇이 똑같을까</h1>
             <p className="hero-sub">
-              여러 문서를 올리면 파일 안팎에서 똑같은 문장을 모두 찾아냅니다. 온전한
-              문장만 비교하고, 제목·이름 같은 문구는 알아서 거릅니다.
+              여러 문서를 올리면 파일 안팎에서 똑같은 문장을 모두 찾아냅니다. 마침표로
+              끝나는 온전한 문장만 비교하고, 제목·이름 같은 문구는 알아서 거릅니다.
             </p>
 
             {phase === 'idle' || phase === 'error' ? (
@@ -434,12 +434,12 @@ export default function Home() {
                     <>
                       표 머리글 {headerSkipped.toLocaleString()}건
                       {labelSkipped > 0 &&
-                        `과 온전한 문장이 아닌 문구(제목·이름·조각) ${labelSkipped.toLocaleString()}건`}
-                      은 검사에서 뺐습니다.{' '}
+                        `과 마침표로 끝나지 않는 문구(제목·이름·조각) ${labelSkipped.toLocaleString()}건`}
+                      은 문장이 아니라서 검사에서 뺐습니다.{' '}
                     </>
                   )}
                   {result.formatReview?.reviewed > 0 &&
-                    `Solar 3 Pro가 해당 문구 ${result.formatReview.reviewed.toLocaleString()}건을 검토해 ${result.formatReview.reincluded.toLocaleString()}건을 온전한 문장으로 되살렸습니다.`}
+                    `Solar 3 Pro가 머리글 후보 ${result.formatReview.reviewed.toLocaleString()}건을 검토해 ${result.formatReview.reincluded.toLocaleString()}건을 기록 문장으로 되살렸습니다.`}
                   {result.formatReview?.error &&
                     ` (AI 서식 검토는 건너뛰었습니다: ${result.formatReview.error})`}
                 </p>

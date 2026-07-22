@@ -40,11 +40,14 @@ export async function POST(req) {
         send({
           type: 'progress',
           pct: 68,
-          message: `Solar 3 Pro가 경계 문구 ${excludedByRule.length}건을 검토하는 중…`,
+          message:
+            excludedByRule.length > 0
+              ? `Solar 3 Pro가 머리글 후보 ${excludedByRule.length}건을 검토하는 중…`
+              : '머리글을 확인하는 중…',
         });
         const review = await reviewFormatPhrases(excludedByRule);
 
-        // 규칙이 뺀 것 중 AI가 '온전한 문장'이라 한 것만 되살린다.
+        // 머리글 행에서 나온 것 중 AI가 '기록 문장'이라 한 것만 되살린다.
         const includeKeys = new Set(
           excludedByRule.filter((it) => review.decisions.get(it.key) === '문장').map((it) => it.key)
         );
