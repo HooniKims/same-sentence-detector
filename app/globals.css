@@ -55,6 +55,10 @@
   --font-main: 'Paperlogy', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
 }
 
+/* 글자 크기 단계 — 본문 텍스트(rem)만 커지고 제목·숫자 등 레이아웃 요소(px)는 고정 */
+:root[data-font='2'] { font-size: 112.5%; }
+:root[data-font='3'] { font-size: 125%; }
+
 * {
   margin: 0;
   padding: 0;
@@ -139,7 +143,7 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 500;
   cursor: default;
   white-space: nowrap;
@@ -163,8 +167,37 @@ button {
   align-items: center;
   gap: 20px;
 }
+.font-switch {
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid var(--color-ash);
+  border-radius: var(--radius-pills);
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.fs-btn {
+  border: none;
+  background: transparent;
+  color: var(--color-graphite);
+  border-radius: var(--radius-pills);
+  line-height: 1;
+  padding: 6px 10px;
+  transition: background 0.15s, color 0.15s;
+}
+.fs-btn.sm { font-size: 12px; }
+.fs-btn.md { font-size: 15px; }
+.fs-btn.lg { font-size: 19px; }
+.fs-btn:hover { color: var(--color-off-black); }
+.fs-btn.on {
+  background: var(--color-off-black);
+  color: #fff;
+}
+.fs-btn:focus-visible {
+  outline: 2px solid var(--color-lake-blue);
+  outline-offset: 2px;
+}
 .topbar-note {
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--color-smoke);
@@ -249,7 +282,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-graphite);
@@ -280,13 +313,13 @@ button {
   font-size: 28px;
 }
 .hero-sub {
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.35;
   color: var(--color-graphite);
   margin-bottom: 32px;
 }
 .stage.split .hero-sub {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-bottom: 24px;
 }
 
@@ -322,12 +355,12 @@ button {
   transform: translateY(-5px);
 }
 .dropzone .dz-main {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 500;
   margin-bottom: 6px;
 }
 .dropzone .dz-hint {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--color-smoke);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -346,7 +379,7 @@ button {
   border: 1px solid var(--color-ash);
   border-radius: var(--radius-pills);
   padding: 10px 18px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   background: rgba(255, 255, 255, 0.5);
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
@@ -369,13 +402,13 @@ button {
   white-space: nowrap;
 }
 .file-chip .f-type {
-  font-size: 11px;
+  font-size: 0.6875rem;
   text-transform: uppercase;
   color: var(--color-smoke);
   letter-spacing: 0.02em;
 }
 .file-chip .f-status {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .file-chip.done { border-color: #9edbba; background: rgba(167, 252, 205, 0.18); }
 .file-chip.active { border-color: var(--color-lake-blue); background: rgba(207, 218, 245, 0.3); }
@@ -383,7 +416,7 @@ button {
   border: none;
   background: none;
   color: var(--color-smoke);
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1;
   padding: 2px 6px;
   border-radius: 50%;
@@ -401,7 +434,7 @@ button {
   justify-content: space-between;
   gap: 12px;
   margin-top: 20px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--color-graphite);
 }
 .opt-row input {
@@ -410,7 +443,7 @@ button {
   border-radius: var(--radius-pills);
   padding: 8px 14px;
   font-family: var(--font-main);
-  font-size: 13px;
+  font-size: 0.8125rem;
   text-align: center;
   background: rgba(255, 255, 255, 0.6);
   color: var(--color-off-black);
@@ -425,7 +458,7 @@ button {
   gap: 10px;
   border-radius: var(--radius-buttons);
   padding: 16px 32px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -548,7 +581,7 @@ button {
 }
 
 .progress-msg {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--color-graphite);
   min-height: 20px;
 }
@@ -575,7 +608,7 @@ button {
   justify-content: center;
 }
 .scan-pill {
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--color-graphite);
@@ -607,7 +640,7 @@ button {
   gap: 14px;
   border-radius: 24px;
   padding: 20px 28px;
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   margin-bottom: 24px;
   border: 1px solid var(--color-ash);
@@ -639,7 +672,7 @@ button {
   max-width: 60vw;
   background: var(--color-off-black);
   color: #fff;
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   line-height: 1.45;
   padding: 10px 14px;
   border-radius: 14px;
@@ -680,12 +713,12 @@ button {
 }
 
 .skip-note {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   color: var(--color-smoke);
   margin: -12px 0 24px 4px;
 }
 .stat-pill .s-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--color-smoke);
@@ -696,7 +729,7 @@ button {
   font-weight: 600;
   letter-spacing: -0.02em;
 }
-.stat-pill .s-value small { font-size: 14px; font-weight: 400; color: var(--color-graphite); }
+.stat-pill .s-value small { font-size: 0.875rem; font-weight: 400; color: var(--color-graphite); }
 
 .table-scroll {
   overflow-x: auto;
@@ -707,13 +740,13 @@ button {
 table.dup {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
 }
 table.dup th {
   background: var(--color-off-black);
   color: #fff;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   text-align: left;
@@ -739,7 +772,7 @@ td.t-num { color: var(--color-smoke); font-variant-numeric: tabular-nums; }
 td.t-count { font-weight: 600; white-space: nowrap; }
 .cross-tag {
   display: inline-block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   border-radius: var(--radius-pills);
   padding: 3px 10px;
   margin-left: 8px;
@@ -762,12 +795,12 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.loc-pos { color: var(--color-graphite); font-size: 12.5px; }
-.loc-more { color: var(--color-smoke); font-size: 12px; margin-top: 4px; }
+.loc-pos { color: var(--color-graphite); font-size: 0.7812rem; }
+.loc-more { color: var(--color-smoke); font-size: 0.75rem; margin-top: 4px; }
 
 .mp-tag {
   display: inline-block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   border-radius: var(--radius-pills);
   padding: 3px 10px;
   margin-left: 8px;
@@ -786,7 +819,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   padding: 28px 32px;
 }
 .mp-card h3 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -794,7 +827,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   margin-bottom: 8px;
 }
 .mp-count {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
   border: 1px solid #d9c26a;
   border-radius: var(--radius-pills);
@@ -802,7 +835,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   color: #8a6d1a;
 }
 .mp-desc {
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   color: var(--color-graphite);
   margin-bottom: 12px;
 }
@@ -816,14 +849,14 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   border-top: 1px solid rgba(217, 194, 106, 0.4);
   padding-top: 8px;
 }
 .mp-sentence { min-width: 0; }
 .mp-locs {
   color: var(--color-smoke);
-  font-size: 12px;
+  font-size: 0.75rem;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -836,7 +869,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   padding: 32px 40px;
 }
 .ai-card h3 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   margin-bottom: 14px;
   display: flex;
@@ -844,7 +877,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   gap: 10px;
 }
 .ai-card .ai-model {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -855,7 +888,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 }
 .ai-card pre {
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.35;
   letter-spacing: -0.02em;
   color: var(--color-off-black);
@@ -871,7 +904,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 .ai-list li {
   position: relative;
   padding-left: 22px;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--color-off-black);
 }
 .ai-list li:first-child {
@@ -914,7 +947,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   transform: translateX(-50%);
   background: var(--color-off-black);
   color: #fff;
-  font-size: 13.5px;
+  font-size: 0.8438rem;
   padding: 12px 26px;
   border-radius: var(--radius-pills);
   box-shadow: var(--shadow-md);
@@ -932,7 +965,7 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   background: rgba(255, 148, 115, 0.18);
   border-radius: 24px;
   padding: 24px 28px;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.6;
 }
 
@@ -941,6 +974,8 @@ td.t-count { font-weight: 600; white-space: nowrap; }
 }
 
 @media (max-width: 900px) {
+  .topbar { padding: 0 20px; height: 64px; }
+  .topbar-right { gap: 12px; }
   .stage { flex-direction: column; padding: 16px 20px 48px; }
   .stage.split .left-panel { flex: 1 1 auto; width: 100%; }
   .right-panel { width: 100%; }
@@ -948,4 +983,26 @@ td.t-count { font-weight: 600; white-space: nowrap; }
   .hero-title { font-size: 32px; }
   .card { padding: 28px; border-radius: 28px; }
   .pct-number { font-size: 64px; }
+  .ai-card { padding: 24px; border-radius: 24px; }
+  .mp-card { padding: 20px 22px; }
+  .mp-card li { flex-direction: column; gap: 4px; }
+  .mp-locs { white-space: normal; }
+  table.dup th { padding: 12px 12px; }
+  table.dup td { padding: 12px 12px; }
+  .loc-file { max-width: 150px; }
+  .dl-row { flex-direction: column; }
+  .dl-row .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 27px;
+    white-space: normal;
+  }
+  .stage.split .hero-title { font-size: 24px; }
+  .signature { font-size: 21px; }
+  .brand { font-size: 1rem; gap: 8px; }
+  .stat-tip { width: 200px; max-width: 76vw; }
+  .verdict { padding: 16px 20px; }
+  .progress-inner { padding: 32px 12px; }
 }

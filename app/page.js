@@ -48,9 +48,26 @@ export default function Home() {
   const [dragging, setDragging] = useState(false);
   const [downloading, setDownloading] = useState(null); // 'xlsx' | 'pdf'
   const [toast, setToast] = useState(null);
+  const [fontLevel, setFontLevel] = useState('1');
   const inputRef = useRef(null);
 
   const split = phase !== 'idle';
+
+  /* 저장해 둔 글자 크기 불러오기 */
+  useEffect(() => {
+    const saved = localStorage.getItem('fontLevel');
+    if (saved === '2' || saved === '3') {
+      setFontLevel(saved);
+      document.documentElement.dataset.font = saved;
+    }
+  }, []);
+
+  function changeFontLevel(level) {
+    setFontLevel(level);
+    if (level === '1') delete document.documentElement.dataset.font;
+    else document.documentElement.dataset.font = level;
+    localStorage.setItem('fontLevel', level);
+  }
 
   /* 진행률을 목표값까지 부드럽게 트위닝 */
   useEffect(() => {
@@ -244,6 +261,23 @@ export default function Home() {
           <strong className="brand-dcms">DCMS</strong>
         </div>
         <div className="topbar-right">
+          <div className="font-switch" role="group" aria-label="글자 크기 조절">
+            {[
+              { level: '1', cls: 'sm', name: '기본 크기' },
+              { level: '2', cls: 'md', name: '크게' },
+              { level: '3', cls: 'lg', name: '아주 크게' },
+            ].map((o) => (
+              <button
+                key={o.level}
+                className={`fs-btn ${o.cls}${fontLevel === o.level ? ' on' : ''}`}
+                onClick={() => changeFontLevel(o.level)}
+                aria-label={`글자 ${o.name}`}
+                title={`글자 ${o.name}`}
+              >
+                가
+              </button>
+            ))}
+          </div>
           <div className="topbar-note">Powered by Upstage Solar 3 Pro</div>
           <div className="signature">by HooniKim</div>
         </div>
